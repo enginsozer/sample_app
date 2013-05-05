@@ -17,7 +17,7 @@ class User < ActiveRecord::Base
 
   #Since not all db adapters are case sensitive, it is better
   #to save the emails after converting to downcase.
-  before_save { |user| user.email = email.downcase }
+  before_save { email.downcase! }
   #validates is a method. Thus, it is possible to write
   #both ways as validates(:name, presence: true)
   validates :name, presence: true, length: { maximum: 50 }

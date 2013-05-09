@@ -18,6 +18,7 @@ class User < ActiveRecord::Base
   #Since not all db adapters are case sensitive, it is better
   #to save the emails after converting to downcase.
   before_save { email.downcase! }
+  before_save :create_remember_token
   #validates is a method. Thus, it is possible to write
   #both ways as validates(:name, presence: true)
   validates :name, presence: true, length: { maximum: 50 }
@@ -25,6 +26,13 @@ class User < ActiveRecord::Base
   validates :email, presence: true, 
   					format: { with: VALID_EMAIL_REGEX }, 
   					uniqueness: { case_sensitive: false }
-  validates :password, presence: true, length: { minimum: 6 }
+  validates :password, length: { minimum: 6 }
   validates :password_confirmation, presence: true
+
+  private
+
+  def create_remember_token
+    # Create the token.
+    self.remember_token = SecureRandom.urlsafe_base64
+  end
 end

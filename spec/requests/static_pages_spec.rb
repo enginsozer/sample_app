@@ -36,8 +36,7 @@ describe "Static Pages" do
 		#end
 		#it { should_not have_selector 'title', text: '| Home' }
 
-		let(:heading)    { 'Sample App' }
-    	let(:page_title) { '' }
+		define_heading_and_title('Sample App', '')
 
    		it_should_behave_like "all static pages"
    		it { should_not have_selector 'title', text: '| Home' }
@@ -46,8 +45,7 @@ describe "Static Pages" do
 	describe "Help page" do
 		before { visit help_path } 
 
-	  	let(:heading)    { 'Help' }
-    	let(:page_title) { 'Help' }
+	  	define_heading_and_title('Help','Help')
 
    		it_should_behave_like "all static pages"
 	end
@@ -55,8 +53,7 @@ describe "Static Pages" do
 	describe "About page" do
 		before { visit about_path } 
 
-	    let(:heading)    { 'About Us' }
-    	let(:page_title) { 'About Us' }
+	    define_heading_and_title('About Us','About Us')
 
    		it_should_behave_like "all static pages"
 	end
@@ -64,25 +61,18 @@ describe "Static Pages" do
 	describe "Contact page" do
 		before { visit contact_path } 
 
-	    let(:heading)    { 'Contact Us' }
-    	let(:page_title) { 'Contact Us' }
+	    define_heading_and_title('Contact Us','Contact Us')
 
    		it_should_behave_like "all static pages"
 	end
 
 	it "should have the right links on the layout" do
 		visit root_path
-		click_link "About"
-			page.should have_selector 'title', text: full_title('About Us')
-		click_link "Help"
-			page.should have_selector 'title', text: full_title('Help')
-		click_link "Contact"
-			page.should have_selector 'title', text: full_title('Contact Us')
-		click_link "Home"
-			page.should have_selector 'title', text: full_title('')
-		click_link "Sign up now!"
-			page.should have_selector 'title', text: full_title('Sign Up')
-		click_link "sample app"
-			page.should have_selector 'title', text: full_title('')
+		visit_and_check_title('About','About Us')
+		visit_and_check_title('Help','Help')
+		visit_and_check_title('Contact','Contact Us')
+		visit_and_check_title('Home','')
+		visit_and_check_title('Sign up now!','Sign Up')
+		visit_and_check_title('sample app','')
 	end
 end

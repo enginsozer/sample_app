@@ -45,6 +45,13 @@ describe "User pages" do
 					expect { click_link('delete') }.to change(User, :count).by(-1)
 				end
 				it { should_not have_link('delete', href: user_path(admin)) }
+
+				
+				describe "delete request" do
+					it "should not be delete admin himself" do
+						expect { delete user_path(admin) }.to_not change(User, :count).by(-1)
+					end
+				end
 			end
 		end
 	end
@@ -57,11 +64,19 @@ describe "User pages" do
 
 	describe "profile page" do
 		let(:user) { FactoryGirl.create(:user) }
+		let!(:m1) { FactoryGirl.create(:micropost, user: user, content: "Foo") }
+		let!(:m2) { FactoryGirl.create(:micropost, user: user, content: "Bar") }
+
 		before { visit user_path(user) }
 
 		it { should have_selector('h1',    text: user.name) }
 		it { should have_selector('title', text: user.name) }
 		#check_heading_and_title(user.name, user.name)
+		describe "microposts" do
+			it { should have_content(m1.content) }
+			it { should have_content(m2.content) }
+			it { should have_content(user.microposts.count) }
+		end
 	end
 
 	describe "signup" do
@@ -88,7 +103,7 @@ describe "User pages" do
 				fill_in "Name",         with: "Example User"
 				fill_in "Email",        with: "user@example.com"
 				fill_in "Password",     with: "foobar"
-				fill_in "Confirmation", with: "foobar"
+				fill_in "Confirm Password", with: "foobar"
 			end
 
 			it "should create a user" do
@@ -117,7 +132,7 @@ describe "User pages" do
 			#it { should have_selector('h1',    text: "Update your profile") }
 			#it { should have_selector('title', text: "Edit user") }
 			check_heading_and_title('Update your profile', "Edit user")
-			it { should have_link('change', href: 'http://gravatar.com/emails') }
+			it { should have_link('Change', href: 'http://gravatar.com/emails') }
 		end
 
 		describe "with invalid information" do

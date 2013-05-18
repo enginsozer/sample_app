@@ -14,6 +14,7 @@ class User < ActiveRecord::Base
   #both ways as attr_accessible(:email, :name)
   attr_accessible :email, :name, :password, :password_confirmation
   has_secure_password
+  has_many :microposts, dependent: :destroy
 
   #Since not all db adapters are case sensitive, it is better
   #to save the emails after converting to downcase.
@@ -28,6 +29,12 @@ class User < ActiveRecord::Base
   					uniqueness: { case_sensitive: false }
   validates :password, length: { minimum: 6 }
   validates :password_confirmation, presence: true
+
+  def feed
+    # This is preliminary. See "Following users" for the full implementation.
+    Micropost.where("user_id = ?", id)
+    #Micropost.where("user_id = ?", id) equals to -> microposts
+  end
 
   private
 

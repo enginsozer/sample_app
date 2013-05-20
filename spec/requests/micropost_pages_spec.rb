@@ -45,15 +45,49 @@ describe "Micropost pages" do
     end
 
     describe "as wrong user" do
+      let(:micropost) { FactoryGirl.create(:micropost, user: user) }
       before do 
         valid_signin wrong_user
-        visit root_path
-        delete micropost_path(micropost)
+      end
+      it "should not delete a micropost" do
+        expect { delete micropost_path(micropost) }.not_to change(Micropost, :count).by(-1)
+      end
+    end
+  end
+
+  describe "micropost pagination" do
+
+    before(:all) { 30.times { FactoryGirl.create(:micropost, user: user) } }
+    after(:all)  { Micropost.delete_all }
+    before do
+      valid_signin user
+    end
+
+    describe "in user profile page" do
+      before { visit user_path(user) }
+
+      describe "should have pagination div" do
+        it { should have_selector 'div', class: 'pagination' }
       end
 
-      it "should not delete a micropost" do
-        specify { response.should redirect_to(root_path) }     
-        #expect { click_link "delete" }.to change(Micropost, :count).by(-1)
+      describe "should have microposts list" do
+        it { should have_selector 'ol.microposts' }
+      end
+
+      describe "should have 10 microposts visible" do
+        it { should have_selector 'ol li', count: 10 }
+      end
+    end
+
+    describe "in home page" do
+      before { visit root_path }
+
+      describe "should have pagination div" do
+        it { should have_selector 'div', class: 'pagination' }
+      end
+
+      describe "should have 5 microposts visible" do
+        it { should have_selector 'ol li', count: 5 }
       end
     end
   end

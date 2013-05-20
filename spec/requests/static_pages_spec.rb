@@ -55,6 +55,10 @@ describe "Static Pages" do
 					page.should have_selector("li##{item.id}", text: item.content)
 				end
 			end
+
+			it "should have the micropost count in the sidebar" do
+				page.should have_selector("span", text: pluralize(user.microposts.count, "micropost"))
+			end
 		end
 	end
 
